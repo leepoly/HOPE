@@ -16,6 +16,11 @@ class Encoder {
 
   virtual int encode(const std::string &key, uint8_t *buffer) const = 0;
 
+  virtual std::vector<int64_t> my_encode(const std::string &key) const {
+    assert(false);
+    return std::vector<int64_t>();
+  }
+
   // Encode a pair of keys at the same time
   virtual void encodePair(const std::string &l_key, const std::string &r_key,
 			  uint8_t *l_buffer, uint8_t *r_buffer,

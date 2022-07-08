@@ -1,7 +1,21 @@
 #include "encoder_factory.hpp"
 
 int main() {
-    static const int kEncoderType = 3; // 3-grams Encoder
+    // if (type == 1)
+    //   return new SingleCharEncoder();
+    // else if (type == 2)
+    //   return new DoubleCharEncoder();
+    // else if (type == 3)
+    //   return new NGramEncoder(3);
+    // else if (type == 4)
+    //   return new NGramEncoder(4);
+    // else if (type == 5)
+    //   return new ALMEncoder(W);
+    // else if (type == 6)
+    //   return new ALMImprovedEncoder(W);
+    // else
+    //   return new DoubleCharEncoder();
+    static const int kEncoderType = 6;
     static const char kKeyFilePath[] = "../datasets/words.txt";
     static const int kNumKeys = 234369;
 
@@ -34,25 +48,18 @@ int main() {
 
     // compress all keys
     std::vector<std::string> enc_keys;
-    int64_t total_enc_len = 0;
-    uint8_t *buffer = new uint8_t[1024];
     for (int i = 0; i < (int)keys.size(); i++) {
-	int bit_len = encoder->encode(keys[i], buffer);
-	total_enc_len += bit_len;
-	enc_keys.push_back(std::string((const char *)buffer, (bit_len + 7) / 8));
+        std::vector<int64_t> enc_list = encoder->my_encode(keys[i]);
+        printf("uncomp_len %ld comp_len %ld: ", keys[i].length(), enc_list.size());
+        for (auto token : enc_list) {
+            printf("%ld ", token);
+        }
+        printf("\n"); // TODO: you can use fprintf to dump tokens to a file
+	// int bit_len = encoder->encode(keys[i], buffer);
+	// total_enc_len += bit_len;
+	// enc_keys.push_back(std::string((const char *)buffer, (bit_len + 7) / 8));
     }
 
-    double cpr_rate =  total_key_len / (total_enc_len + 0.0);
-    std::cout << "Compression Rate = " << cpr_rate << std::endl;
-
-    // verify the order-preserving property of HOPE
-    for (int i = 0; i < (int)keys.size() - 1; i++) {
-	int cmp = enc_keys[i].compare(enc_keys[i + 1]);
-	if (cmp >= 0) {
-	    std::cout << "Order-Preserving property violated!" << std::endl;
-	    return -1;
-	}
-    }
     
     return 0;
 }

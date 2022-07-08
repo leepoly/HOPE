@@ -110,6 +110,13 @@ int NGramEncoder::encode(const std::string &key, uint8_t *buffer) const {
   int_buf[idx] = __builtin_bswap64(int_buf[idx]);
   return ((idx << 6) + int_buf_len);
 }
+std::vector<int64_t> NGramEncoder::my_encode(const std::string &key) const {
+  const char *key_str = key.c_str();
+  int pos = 0;
+  std::vector<int64_t> ret;
+  // TODO: insert your code here. Refer to ALMImproved_encoder.hpp for details.
+  return ret;
+}
 #else
 int NGramEncoder::encode(const std::string &key, uint8_t *buffer) const {
   int64_t *int_buf = (int64_t *)buffer;
@@ -141,6 +148,13 @@ int NGramEncoder::encode(const std::string &key, uint8_t *buffer) const {
   int_buf[idx] <<= (64 - int_buf_len);
   int_buf[idx] = __builtin_bswap64(int_buf[idx]);
   return ((idx << 6) + int_buf_len);
+}
+std::vector<int64_t> NGramEncoder::my_encode(const std::string &key) const {
+  const char *key_str = key.c_str();
+  int pos = 0;
+  std::vector<int64_t> ret;
+  // TODO: insert your code here. Refer to ALMImproved_encoder.hpp for details.
+  return ret;
 }
 #endif
 

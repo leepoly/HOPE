@@ -20,6 +20,8 @@ class ALMImprovedEncoder : public Encoder {
   bool build(const std::vector<std::string> &key_list, const int64_t dict_size_limit);
   int encode(const std::string &key, uint8_t *buffer) const;
 
+  std::vector<int64_t> my_encode(const std::string &key) const;
+
   void encodePair(const std::string &l_key, const std::string &r_key,
 		  uint8_t *l_buffer, uint8_t *r_buffer,
                   int &l_enc_len, int &r_enc_len) const;
@@ -98,6 +100,20 @@ int ALMImprovedEncoder::encode(const std::string &key, uint8_t *buffer) const {
   int_buf[idx] <<= (64 - int_buf_len);
   int_buf[idx] = __builtin_bswap64(int_buf[idx]);
   return ((idx << 6) + int_buf_len);
+}
+
+std::vector<int64_t> ALMImprovedEncoder::my_encode(const std::string &key) const {
+  const char *key_str = key.c_str();
+  int pos = 0;
+  std::vector<int64_t> ret;
+  while (pos < (int)key.length()) {
+    int prefix_len = 0;
+    Code code = dict_->lookup(key_str + pos, key.size() - pos, prefix_len);
+    // int64_t s_buf = code.code;
+    ret.push_back(code.code);
+    pos += prefix_len;
+  }
+  return ret;
 }
 
 void ALMImprovedEncoder::encodePair(const std::string &l_key, const std::string &r_key,
